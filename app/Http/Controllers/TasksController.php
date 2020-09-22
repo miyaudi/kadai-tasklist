@@ -48,9 +48,14 @@ class TasksController extends Controller
     public function store(Request $request)
     {
         //
-        //
+        $request->validate([
+            'status' => 'required|max:10',
+            'content' => 'required|max:255',
+        ]);
+
         // メッセージを作成
         $task = new Task;
+        $task->status = $request->status;
         $task->content = $request->content;
         $task->save();
 
@@ -105,10 +110,15 @@ class TasksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
-                // idの値でメッセージを検索して取得
+        $request->validate([
+            'statua' => 'required|max:10',
+            'content' => 'required|max:255',
+        ]);
+
+        // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
         // メッセージを更新
+        $task->status = $request->status;
         $task->content = $request->content;
         $task->save();
 
