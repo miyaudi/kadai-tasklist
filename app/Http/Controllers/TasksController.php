@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Task;
 
+use App\User;
+
 use Illuminate\Support\Facades\Auth; 
 
 class TasksController extends Controller
@@ -21,13 +23,16 @@ class TasksController extends Controller
         $task = '';
         $data = [];
         
+
         if(\Auth::check()){
 
             $user = \Auth::user();
+            $users = $user->tasks()->orderBy('id', 'desc')->paginate(10);
             $task = Task::all();
             
             $data = [
                 'user' => $user,
+                'users' => $users,
                 'tasks' => $task, 
             ];
         }
@@ -66,24 +71,10 @@ class TasksController extends Controller
         ]);
         
         $request->user()->tasks()->create([
-            'user_id' =>Auth::id(),
             'status' => $request->status,
             'content' => $request->content
         ]);
         // 前のURLへリダイレクトさせる
-
-
-        // $task = new Task;
-
-        // $request->user()->tasks()->create([
-        //     // メッセージを作成
-        //     'content' => $request->content,
-        // ]);
-        
-        // $task->user_id = Auth::id();
-        // $task->status = $request->status;
-        // $task->content = $request->content;
-        // $task->save();
 
         // トップページへリダイレクトさせる
         return redirect('/');
@@ -99,9 +90,11 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        //
-        // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
+        // idの値でメッセージを検索して取得
+        if (\Auth::id() === $task->user_id) {
+            $task = Task::findOrFail($id);
+        }
 
         // メッセージ詳細ビューでそれを表示
         return view('tasks.show', [
@@ -118,9 +111,11 @@ class TasksController extends Controller
      */
     public function edit($id)
     {
-        //
-        // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
+        // idの値でメッセージを検索して取得
+        if (\Auth::id() === $task->user_id) {
+            $task = Task::findOrFail($id);
+        }
 
         // メッセージ編集ビューでそれを表示
         return view('tasks.edit', [
@@ -146,7 +141,6 @@ class TasksController extends Controller
         $task = Task::findOrFail($id);
         // メッセージを更新
         if (\Auth::id() === $task->user_id) {
-            $task->user_id = Auth::id();
             $task->status = $request->status;
             $task->content = $request->content;
             $task->save();

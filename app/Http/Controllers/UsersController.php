@@ -27,7 +27,8 @@ class UsersController extends Controller
         
         $user->loadRelationshipCounts();
         // dd($user);
-
+        $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+        dd($tasks);
         // ユーザ詳細ビューでそれを表示
         return view('users.show', [
             'user' => $user,
