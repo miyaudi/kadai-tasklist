@@ -2,9 +2,14 @@
 
 @section('content')
 
-    <h1>タスク一覧</h1>
-
-    @if (count($tasks) > 0)
+    @if (Auth::check())
+        {{ Auth::user()->name }}
+        @if (count($tasks) > 0)
+        @foreach ($tasks as $task)
+            <p>{{ $task->user->name }}</p>
+            <p class="mb-0">{!! nl2br(e($task->content)) !!}</p>
+        @endforeach
+        <h1>タスク一覧</h1>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -25,7 +30,11 @@
                 @endforeach
             </tbody>
         </table>
+        {!! link_to_route('tasks.create', '新規メッセージの投稿', [], ['class' => 'btn btn-primary']) !!}
+    @endif
+
+    @else
+        <h2>LOgin</h2>
     @endif
     
-    {!! link_to_route('tasks.create', '新規メッセージの投稿', [], ['class' => 'btn btn-primary']) !!}
 @endsection

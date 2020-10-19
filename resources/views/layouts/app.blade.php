@@ -11,8 +11,12 @@
         <header class="mb-4">
             <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
                 {{-- トップページへのリンク --}}
+                @if (Auth::check())
                 <a class="navbar-brand" href="/">TaskBoard</a>
-
+                @else
+                {!! link_to_route('signup.get', 'Signup', [], ['class' => 'nav-link']) !!}
+                {!! link_to_route('login', 'Login', [], ['class' => 'nav-link']) !!}
+                @endif
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#nav-bar">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -21,9 +25,19 @@
                     <ul class="navbar-nav mr-auto"></ul>
                     <ul class="navbar-nav">
                         {{-- メッセージ作成ページへのリンク --}}
-                        <li class="nav-item">{!! link_to_route('tasks.create', '新規メッセージの投稿', [], ['class' => 'nav-link']) !!}</li>
+                        @if (Auth::check())
+                            <li class="nav-item">{!! link_to_route('tasks.create', '新規メッセージの投稿', [], ['class' => 'nav-link']) !!}</li>
+                            <li class="nav-item">{!! link_to_route('logout.get', 'Logout', [], ['class' => 'nav-link']) !!}</li>
+                            <li class="nav-item">{{ Auth::user()->name }}</li>
+                        @else
+                            <li class="nav-item">{!! link_to_route('signup.get', 'Signup', [], ['class' => 'nav-link']) !!}</li>
+                            <li class="nav-item">{!! link_to_route('login', 'Login', [], ['class' => 'nav-link']) !!}</li>
+                        @endif
                     </ul>
+
                 </div>
+                
+                
             </nav>
         </header>
         

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Task;
 
+use Illuminate\Support\Facades\Auth; 
+
 class TasksController extends Controller
 {
     /**
@@ -16,11 +18,21 @@ class TasksController extends Controller
     public function index()
     {
         //
-        $task = Task::all();
+        $task = '';
+        $data = [];
         
-        return view('tasks.index', [
-            'tasks' => $task,    
-        ]);
+        if(\Auth::check()){
+
+            $user = \Auth::user();
+            $task = Task::all();
+            
+            $data = [
+                'user' => $user,
+                'tasks' => $task, 
+            ];
+        }
+        
+        return view('tasks.index',$data);
 
     }
 
@@ -52,15 +64,30 @@ class TasksController extends Controller
             'status' => 'required|max:10',
             'content' => 'required|max:255',
         ]);
+        
+        $request->user()->tasks()->create([
+            'user_id' =>Auth::id(),
+            'status' => $request->status,
+            'content' => $request->content
+        ]);
+        // 前のURLへリダイレクトさせる
 
-        // メッセージを作成
-        $task = new Task;
-        $task->status = $request->status;
-        $task->content = $request->content;
-        $task->save();
+
+        // $task = new Task;
+
+        // $request->user()->tasks()->create([
+        //     // メッセージを作成
+        //     'content' => $request->content,
+        // ]);
+        
+        // $task->user_id = Auth::id();
+        // $task->status = $request->status;
+        // $task->content = $request->content;
+        // $task->save();
 
         // トップページへリダイレクトさせる
         return redirect('/');
+        // return back();
 
     }
 
@@ -118,9 +145,12 @@ class TasksController extends Controller
         // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
         // メッセージを更新
-        $task->status = $request->status;
-        $task->content = $request->content;
-        $task->save();
+        if (\Auth::id() === $task->user_id) {
+            $task->user_id = Auth::id();
+            $task->status = $request->status;
+            $task->content = $request->content;
+            $task->save();
+        }
 
         // トップページへリダイレクトさせる
         return redirect('/');
@@ -137,9 +167,14 @@ class TasksController extends Controller
         // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
         // メッセージを削除
-        $task->delete();
+        if (\Auth::id() === $task->user_id) {
+            $task->delete();
+        }
 
         // トップページへリダイレクトさせる
         return redirect('/');
     }
 }
+
+
+// 2020_09_22_121754_add_status_to_tasks_table.php
