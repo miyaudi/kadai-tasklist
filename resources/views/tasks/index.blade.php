@@ -17,7 +17,7 @@
                     <th>
                         ステータス
                     </th>
-                    <thタスク</th>
+                    <th>タスク</th>
                 </tr>
             </thead>
             <tbody>
