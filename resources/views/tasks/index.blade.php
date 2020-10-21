@@ -36,7 +36,7 @@
     @endif
 
     @else
-        <h2>LOgin</h2>
+        <h2>Login前画面</h2>
     @endif
     
 @endsection
