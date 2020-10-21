@@ -17,7 +17,7 @@
                     <th>
                         ステータス
                     </th>
-                    <th>メッセージ</th>
+                    <thタスク</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,7 +32,7 @@
                 @endforeach
             </tbody>
         </table>
-        {!! link_to_route('tasks.create', '新規メッセージの投稿', [], ['class' => 'btn btn-primary']) !!}
+        {!! link_to_route('tasks.create', 'タスク追加', [], ['class' => 'btn btn-primary']) !!}
     @endif
 
     @else
